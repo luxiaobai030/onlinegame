@@ -1,0 +1,10 @@
+# 依赖（本项目零依赖，留着以防以后装东西）
+node_modules/
+
+# 编辑器
+.vscode/
+.idea/
+
+# 系统生成
+.DS_Store
+Thumbs.db
