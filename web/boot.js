@@ -2,10 +2,12 @@
 // 做的事情只有三件：
 //   1) 一个极简的 CommonJS 加载器：让小游戏那套 require/module.exports 能在浏览器里跑
 //   2) 一个假的 wx 对象：把微信小游戏用到的那十几个接口，映射成浏览器里对应的能力
-//   3) 只把「联机层」换掉（services/net.js -> web/net-web.js），其余代码原样复用
+//   3) 只把「联机层」换掉（services/net.js -> web/net-mqtt.js），其余代码原样复用
 (function () {
   // 逻辑分辨率固定成竖屏手机的尺寸，界面代码按这个尺寸画，不管什么屏幕都不会错位
   var W = 390, H = 844;
+  // 网页自身所在的目录，所有文件都相对它来取 —— 换到子目录部署不会找不到文件
+  var SITE = location.pathname.replace(/[^/]*$/, '');
 
   var canvas = document.getElementById('game');
   var view = canvas.getContext('2d');
@@ -26,8 +28,8 @@
   // ---------- 1) 极简 CommonJS 加载器 ----------
   var cache = {};
   var cacheSource = {};
-  // 联机层换成网页版；其余文件原样复用
-  var REMAP = { 'services/net.js': 'web/net-web.js' };
+  // 联机层换成网页版：借公共 MQTT 代理中转，不用自己架服务器；其余文件原样复用
+  var REMAP = { 'services/net.js': 'web/net-mqtt.js' };
 
   function normalize(base, p) {
     var parts = (p.charAt(0) === '/' ? p : base + '/' + p).split('/');
@@ -43,7 +45,7 @@
   function readText(p) {
     if (cacheSource[p]) return cacheSource[p];
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/' + p, false);       // 同步读取：只发生在启动那一下，几十个小文件而已
+    xhr.open('GET', SITE + p, false);      // 同步读取：只发生在启动那一下，几十个小文件而已
     xhr.send(null);
     if (xhr.status !== 200 && xhr.status !== 0) {
       throw new Error('读不到文件 /' + p + '（' + xhr.status + '）');

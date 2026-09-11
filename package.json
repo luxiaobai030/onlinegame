@@ -5,6 +5,7 @@
   "description": "双人游戏合集 · 网页版：自己开房间，把链接发给朋友就能一起玩",
   "scripts": {
     "start": "node server.js",
-    "test": "node tests/web.test.js"
+    "test": "node tests/web.test.js",
+    "test:net": "node tests/mqtt.test.js"
   }
 }

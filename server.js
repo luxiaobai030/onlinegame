@@ -26,7 +26,7 @@ const MIME = {
   '.mp3': 'audio/mpeg', '.ico': 'image/x-icon'
 };
 const OPEN_DIRS = ['minigame/', 'games/', 'services/', 'utils/', 'web/'];
-const OPEN_FILES = ['game.js', 'config.js'];
+const OPEN_FILES = ['game.js', 'config.js', 'index.html'];
 
 function readable(rel) {
   if (OPEN_FILES.indexOf(rel) >= 0) return true;
@@ -38,7 +38,7 @@ function readable(rel) {
 
 function sendFile(req, res) {
   let rel = decodeURIComponent(String(req.url || '/').split('?')[0]);
-  if (rel === '/' || rel === '') rel = '/web/index.html';
+  if (rel === '/' || rel === '') rel = '/index.html';
   rel = rel.replace(/^\/+/, '');
   const file = path.resolve(ROOT, rel);
   if (file.indexOf(ROOT) !== 0 || !readable(path.relative(ROOT, file).replace(/\\/g, '/'))) {
